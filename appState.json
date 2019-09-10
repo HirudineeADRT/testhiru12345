@@ -8,7 +8,8 @@
         "type": "DIRECTORY",
         "isDirectory": true,
         "children": [
-          "e4290d8f-3185-410d-953d-ca66f99a6bdf"
+          "e4290d8f-3185-410d-953d-ca66f99a6bdf",
+          "9bb9e3cd-9425-423c-876f-8ed99566b1f0"
         ],
         "isRemovable": false,
         "filePath": "testhiru12345"
@@ -22,7 +23,7 @@
         "children": [],
         "isRemovable": true,
         "filePath": "testhiru12345/lambda.js",
-        "code": "exports.handler = function(event, context, callback) {\n    \n    callback(null, {\"message\": \"Successfully executed\"});\n}",
+        "code": "let SL_REDIS = require('slappforge-sdk-redis');\nlet clusterManager = require('./ClusterManager');\nconst redis = new SL_REDIS.Redis(clusterManager);\n\nexports.handler = function (event, context, callback) {\n    // You must always quit the redis client after it's used\n    redis.persist({\n        clusterIdentifier: 'hiruclustername',\n        params: ['gg']\n    }, function (error, response, redisClient) {\n        if (error) {\n            callback(error);\n        } else {\n            //redisClient.quit();\n        }\n    });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
         "config": {
           "runtime": "nodejs8.10",
           "handler": "handler",
@@ -31,6 +32,17 @@
           "layers": []
         },
         "triggers": []
+      },
+      "9bb9e3cd-9425-423c-876f-8ed99566b1f0": {
+        "id": "9bb9e3cd-9425-423c-876f-8ed99566b1f0",
+        "parent": "db7bf5d8-6a9f-453b-802a-28af65992aa4",
+        "name": "ClusterManager.js",
+        "type": "JS_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "testhiru12345/ClusterManager.js",
+        "code": "module.exports = function() {\n    this.clusters = [];\n\n    this.clusters[\"hiruclustername\"] = {\n        host: \"hiruclustername.y6jiqb.ng.0001.use1.cache.amazonaws.com\",\n        port: 6379,\n        clusterModeEnabled: false\n    };\n};"
       }
     },
     "rootNode": "db7bf5d8-6a9f-453b-802a-28af65992aa4",
@@ -38,7 +50,64 @@
       "e4290d8f-3185-410d-953d-ca66f99a6bdf"
     ],
     "currentFileId": "e4290d8f-3185-410d-953d-ca66f99a6bdf",
-    "resources": {},
+    "resources": {
+      "redis-hiruclustername": {
+        "name": "redis-hiruclustername",
+        "type": "Redis",
+        "config": {
+          "clusterConfig": {
+            "engineType": "redis",
+            "clusterSpec": {
+              "instanceFamily": "m3",
+              "deployedInstanceFamily": "m3",
+              "engineVersion": "5.0.4",
+              "deployedEngineVersion": "5.0.4",
+              "nodeTypeClass": "cache.m3.medium",
+              "deployedNodeTypeClass": "cache.m3.medium",
+              "clusterModeEnabled": false,
+              "autoFailoverEnabled": "disabled",
+              "numOfShards": 1,
+              "numOfReplicas": 0
+            },
+            "clusterSetting": {
+              "clusterName": "hiruclustername",
+              "clusterDescription": "this is a test",
+              "port": 6379
+            },
+            "host": "hiruclustername.y6jiqb.ng.0001.use1.cache.amazonaws.com",
+            "doesExist": true,
+            "alreadyDeployed": true,
+            "external": true,
+            "redisClient": ""
+          },
+          "clusterResources": [],
+          "editMode": false,
+          "enableInject": true,
+          "isGlobalEditMode": false,
+          "isClusterSelectionValid": true,
+          "isNewFromGlobal": false,
+          "mode": 1,
+          "operation": {
+            "str": "REDIS_PERSIST",
+            "operation": "persist",
+            "displayName": "PERSIST",
+            "type": {
+              "str": "REDIS_KEYS",
+              "type": "keys",
+              "displayName": "KEYS"
+            }
+          },
+          "params": [],
+          "projectRegion": "us-east-1",
+          "reusableMode": false,
+          "showOperations": true,
+          "validator": {
+            "validatableFields": {},
+            "validity": true
+          }
+        }
+      }
+    },
     "customTemplate": {
       "dialect": null,
       "definitions": null
@@ -54,7 +123,15 @@
       }
     ],
     "packageJSON": {
-      "dependencies": {}
+      "dependencies": {
+        "slappforge-sdk-redis": {
+          "name": "slappforge-sdk-redis",
+          "language": "javascript",
+          "version": "0.0.3",
+          "dev": false,
+          "notRemovable": false
+        }
+      }
     }
   },
   "PROJECT_META": {
@@ -64,7 +141,7 @@
     "projectRegion": "us-east-1",
     "platform": "AWS",
     "platformRegions": {},
-    "lastSave": 1568108647724
+    "lastSave": 1568108730037
   },
   "VCS_STATE": {
     "provider": "GitHub",
